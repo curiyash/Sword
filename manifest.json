@@ -1,0 +1,31 @@
+{
+
+    "manifest_version": 2,
+    "name": "Sword",
+    "version": "1.0",
+  
+    "description": "Get meanings of highlighted words on current page",
+    "homepage_url": "https://github.com/mdn/webextensions-examples/tree/master/beastify",
+    "icons": {
+      "48": "icons/search-48.png"
+    },
+  
+    "permissions": [
+        "activeTab",
+        "http://localhost/*"
+    ],
+  
+    "browser_action": {
+      "default_icon": "icons/dict-32.png",
+      "default_title": "Sword",
+      "default_popup": "popup/sword.html"
+    },
+  
+    "web_accessible_resources": [
+      "beasts/frog.jpg",
+      "beasts/turtle.jpg",
+      "beasts/snake.jpg"
+    ]
+  
+  }
+  
