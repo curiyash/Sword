@@ -88,7 +88,7 @@ def get_meta_info(soup, res=None):
     langs = []
     info = {" Synonyms": 0, " Antonyms": 0, " Related terms": 0}
     # pos = {' Noun': [False, {" Synonyms": False, " Antonyms": False, " Related terms": False}, 0], ' Verb': [False, {" Synonyms": False, " Antonyms": False, " Related terms": False}, 0], ' Adjective': [False, {" Synonyms": False, " Antonyms": False, " Related terms": False}, 0], ' Adverb': [False, {" Synonyms": False, " Antonyms": False, " Related terms": False}, 0], ' Interjection': [False, {" Synonyms": False, " Antonyms": False, " Related terms": False}, 0], ' Proper noun': [False, {" Synonyms": False, " Antonyms": False, " Related terms": False}, 0]}
-    pos = {' Noun': [False, copy.deepcopy(info)], ' Verb': [False, copy.deepcopy(info)], ' Adjective': [False, copy.deepcopy(info)], ' Adverb': [False, copy.deepcopy(info)], ' Interjection': [False, copy.deepcopy(info)], ' Proper noun': [False, copy.deepcopy(info)]}
+    pos = {' Noun': [False, copy.deepcopy(info)], ' Verb': [False, copy.deepcopy(info)], ' Adjective': [False, copy.deepcopy(info)], ' Adverb': [False, copy.deepcopy(info)], ' Interjection': [False, copy.deepcopy(info)], ' Proper noun': [False, copy.deepcopy(info)], ' Pronoun': [False, copy.deepcopy(info)], ' Determiner': [False, copy.deepcopy(info)]}
     meta_info = {" Pronunciation": False}
     m_flag = 1
     for lang in soup.find_all('li', {"class": "toclevel-1"}):
@@ -124,7 +124,6 @@ def get_meta_info(soup, res=None):
                 pos[s][0] = True
                 for i in pos[s][1]:
                   if (i in search):
-                    print(s, i)
                     if (i==' Synonyms'):
                       syns+=1
                       pos[s][1][i] = syns
@@ -317,6 +316,7 @@ def parse(response, word, pos, ps):
   if ps[mod_pos][0]:
     lists = en.findNext('span', {"id": f"{pos.strip()}"}).parent.findNext('ol')
     extract_meanings(lists, res)
+    print(res)
     if ps[mod_pos][1][' Synonyms']:
       res['synonyms'] = extract_synonyms(lists, ps[mod_pos][1][' Synonyms'])
     if ps[mod_pos][1][' Antonyms']:
@@ -328,14 +328,19 @@ def parse(response, word, pos, ps):
   else:
     otherAva = None
     for key in ps:
+      if (key=='meta_info'):
+        continue
       if ps[key][0]==True:
         otherAva = key
         break
+    if otherAva==None:
+      return None
     print("otherAva:", otherAva)
     if otherAva!=None:
       res['pos'] = otherAva.strip()
+      if (otherAva==" Proper noun"):
+        otherAva = " Proper_noun"
       mod_pos = otherAva
-      res['pos'] = mod_pos.strip()
       if (otherAva.strip()=="Proper_noun"):
         mod_pos = f' Proper noun'
       
@@ -349,6 +354,7 @@ def parse(response, word, pos, ps):
         res['related_terms'] = extract_terms(lists, ps[mod_pos][1][' Related terms'])
       res['img_tags'] = extract_images(en)
   # res = json.dumps(res, indent=4)
+  print("I exist")
   return res
 
 def parsePos(response, word, pos, syn, ant, rel):
